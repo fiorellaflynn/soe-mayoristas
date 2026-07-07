@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SOE Mayoristas · Molinos Río de la Plata</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --azul: #203699;
+    --azul-oscuro: #192a7a;
+    --azul-claro: #28367C;
+    --rojo: #EC1C2F;
+    --amarillo: #FFCB00;
+    --verde: #007853;
+    --naranja: #EF4C23;
+    --gris: #595959;
+    --gris-claro: #f4f5f9;
+    --gris-borde: #e0e3ed;
+    --blanco: #ffffff;
+    --texto: #1a1a2e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--gris-claro);
+    color: var(--texto);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--azul);
+    color: white;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .header-logo {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .header-logo span { color: var(--amarillo); }
+  .header-sub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.2);
+    position: relative;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--amarillo);
+    transition: width 0.4s ease;
+  }
+
+  /* MAIN CONTAINER */
+  .container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 20px 16px 80px;
+  }
+
+  /* SCREENS */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+
+  .card-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--azul);
+    margin-bottom: 6px;
+  }
+  .card-sub {
+    font-size: 13px;
+    color: var(--gris);
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+
+  /* FORM ELEMENTS */
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--azul-claro);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 6px;
+    margin-top: 16px;
+  }
+  label:first-of-type { margin-top: 0; }
+
+  select, input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid var(--gris-borde);
+    border-radius: 10px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--texto);
+    background: white;
+    appearance: none;
+    -webkit-appearance: none;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  select:focus, input:focus {
+    border-color: var(--azul);
+  }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23203699' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+  }
+
+  /* BUTTONS */
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    letter-spacing: 0.3px;
+  }
+  .btn:active { transform: scale(0.98); }
+
+  .btn-primary {
+    background: var(--azul);
+    color: white;
+    margin-top: 24px;
+  }
+  .btn-primary:hover { background: var(--azul-oscuro); }
+
+  .btn-secondary {
+    background: var(--gris-claro);
+    color: var(--azul);
+    margin-top: 10px;
+    border: 2px solid var(--gris-borde);
+  }
+
+  .btn-success {
+    background: var(--verde);
+    color: white;
+    margin-top: 24px;
+  }
+
+  .btn-danger {
+    background: var(--rojo);
+    color: white;
+    margin-top: 10px;
+  }
+
+  .btn-small {
+    padding: 8px 16px;
+    width: auto;
+    display: inline-block;
+    font-size: 13px;
+    border-radius: 8px;
+  }
+
+  /* CATEGORY NAV */
+  .cat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .cat-name {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--azul);
+  }
+  .cat-counter {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gris);
+    background: var(--gris-claro);
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  /* BRAND ROWS */
+  .brand-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--gris-borde);
+  }
+  .brand-row:last-child { border-bottom: none; }
+
+  .brand-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--texto);
+    flex: 1;
+    padding-right: 12px;
+  }
+
+  .frentes-input {
+    width: 80px;
+    padding: 10px 8px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 800;
+    border: 2px solid var(--gris-borde);
+    border-radius: 10px;
+    margin: 0;
+  }
+  .frentes-input:focus { border-color: var(--azul); }
+  .frentes-input.has-value { border-color: var(--verde); background: #f0faf5; }
+
+  /* STEPPER */
+  .stepper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .stepper-btn {
+    width: 34px;
+    height: 34px;
+    border: 2px solid var(--gris-borde);
+    border-radius: 8px;
+    background: white;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--azul);
+    flex-shrink: 0;
+  }
+  .stepper-btn:active { background: var(--gris-claro); }
+
+  /* NAVIGATION ARROWS */
+  .nav-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .nav-row .btn { margin-top: 0; }
+
+  /* STEP INDICATOR */
+  .step-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 16px 0 8px;
+  }
+  .step-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gris-borde);
+    transition: all 0.3s;
+  }
+  .step-dot.active {
+    background: var(--azul);
+    width: 24px;
+    border-radius: 4px;
+  }
+  .step-dot.done { background: var(--verde); }
+
+  /* SUMMARY */
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--gris-borde);
+    font-size: 14px;
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-cat { font-weight: 700; color: var(--azul); }
+  .summary-val { font-weight: 800; color: var(--texto); }
+
+  /* CONTEXT BAR */
+  .context-bar {
+    background: var(--azul);
+    color: white;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .context-item {
+    display: flex;
+    flex-direction: column;
+  }
+  .context-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 700;
+  }
+  .context-value {
+    font-size: 14px;
+    font-weight: 800;
+    color: white;
+  }
+
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge-azul { background: var(--azul); color: white; }
+  .badge-verde { background: #e6f7f1; color: var(--verde); }
+  .badge-rojo { background: #fdecea; color: var(--rojo); }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--texto);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    z-index: 999;
+    transition: transform 0.3s;
+    white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { background: var(--verde); }
+  .toast.error { background: var(--rojo); }
+
+  /* SUPERVISOR PANEL */
+  .records-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .records-table th {
+    background: var(--azul);
+    color: white;
+    padding: 8px;
+    text-align: left;
+    font-weight: 700;
+  }
+  .records-table td {
+    padding: 8px;
+    border-bottom: 1px solid var(--gris-borde);
+  }
+  .records-table tr:nth-child(even) td { background: var(--gris-claro); }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--gris);
+  }
+  .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-text { font-size: 15px; font-weight: 700; }
+  .empty-sub { font-size: 13px; margin-top: 6px; }
+
+  /* SECTION CARDS */
+  .seccion-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border: 2px solid var(--gris-borde);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.18s;
+    background: white;
+    width: 100%;
+    font-family: 'Nunito', sans-serif;
+    text-align: left;
+  }
+  .seccion-card:hover { border-color: var(--azul); background: #eef1fb; }
+  .seccion-card.done { border-color: var(--verde); background: #f0faf5; }
+  .seccion-card.in-progress { border-color: var(--amarillo); background: #fffcf0; }
+
+  .seccion-left { display: flex; align-items: center; gap: 12px; }
+  .seccion-emoji { font-size: 26px; line-height: 1; }
+  .seccion-info {}
+  .seccion-nombre { font-size: 16px; font-weight: 800; color: var(--texto); }
+  .seccion-cats { font-size: 12px; color: var(--gris); font-weight: 600; margin-top: 2px; }
+  .seccion-status { font-size: 20px; }
+
+  /* SETUP ALERT */
+  .setup-alert {
+    background: #fff8e1;
+    border: 2px solid var(--amarillo);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #5a4000;
+  }
+  .setup-alert strong { display: block; margin-bottom: 4px; font-size: 14px; }
+
+  /* MES PICKER */
+  .mes-display {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid var(--gris-borde);
+    border-radius: 10px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--texto);
+    background: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    transition: border-color 0.2s;
+  }
+  .mes-display:focus, .mes-display.open { border-color: var(--azul); }
+  .mes-display.selected { color: var(--texto); }
+  .mes-display span { color: #aaa; font-weight: 600; }
+  .mes-display.selected span { color: var(--texto); }
+
+  .mes-dropdown {
+    background: white;
+    border: 2px solid var(--azul);
+    border-radius: 12px;
+    margin-top: 6px;
+    padding: 16px;
+    box-shadow: 0 8px 24px rgba(32,54,153,0.12);
+  }
+
+  .mes-year-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .mes-year-nav span {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--azul);
+  }
+  .mes-year-nav button {
+    background: var(--gris-claro);
+    border: none;
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--azul);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+  }
+  .mes-year-nav button:hover { background: var(--gris-borde); }
+  .mes-year-nav button:disabled { opacity: 0.3; cursor: default; }
+
+  .mes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .mes-btn {
+    padding: 10px 4px;
+    border: 2px solid var(--gris-borde);
+    border-radius: 10px;
+    background: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gris);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .mes-btn:hover { border-color: var(--azul); color: var(--azul); background: #eef1fb; }
+  .mes-btn.selected { background: var(--azul); color: white; border-color: var(--azul); }
+
+  @media (max-width: 360px) {
+    .brand-name { font-size: 13px; }
+    .frentes-input { width: 70px; font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-logo">Molinos <span>SOE</span></div>
+    <div class="header-sub">Mayoristas</div>
+  </div>
+  <div id="headerRight"></div>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+<div class="container">
+
+  <!-- SCREEN 0: HOME -->
+  <div class="screen active" id="screen-home">
+    <div class="card" style="margin-top:8px">
+      <div class="card-title">Toma de Frentes</div>
+      <div class="card-sub">Registrá la participación en góndola de cada categoría</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+        <button class="btn btn-primary" onclick="showScreen('screen-inicio')" style="margin-top:0">
+          📋 Nueva toma
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:13px;font-weight:700;color:var(--azul);margin-bottom:12px">¿Cómo usar la app?</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <div style="background:var(--azul);color:white;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">1</div>
+          <div style="font-size:13px;font-weight:600;color:var(--gris)">Seleccioná mes, cadena y sucursal</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <div style="background:var(--azul);color:white;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">2</div>
+          <div style="font-size:13px;font-weight:600;color:var(--gris)">Cargá los frentes de cada marca por categoría</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <div style="background:var(--azul);color:white;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">3</div>
+          <div style="font-size:13px;font-weight:600;color:var(--gris)">Confirmá el envío al terminar todas las categorías</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 1: INICIO -->
+  <div class="screen" id="screen-inicio">
+    <div class="card" style="margin-top:8px">
+      <div class="card-title">Nueva toma</div>
+      <div class="card-sub">Completá los datos antes de empezar</div>
+
+      <label>Mes y año</label>
+      <div id="mes-picker">
+        <button type="button" class="mes-display" id="mes-display-btn" onclick="toggleMesPicker()">
+          <span id="mes-display-text">Seleccioná mes y año...</span>
+          <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="#203699" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <div class="mes-dropdown" id="mes-dropdown" style="display:none">
+          <div class="mes-year-nav">
+            <button type="button" onclick="changeYear(-1)">‹</button>
+            <span id="mes-year-label">2026</span>
+            <button type="button" onclick="changeYear(1)">›</button>
+          </div>
+          <div class="mes-grid" id="mes-grid"></div>
+        </div>
+      </div>
+
+      <label>Cadena</label>
+      <select id="sel-cadena" onchange="updateSucursales()">
+        <option value="">Seleccioná...</option>
+        <option>Diarco</option>
+        <option>Makro</option>
+        <option>Maxiconsumo</option>
+        <option>Nini</option>
+        <option>Vital</option>
+        <option>Yaguar</option>
+      </select>
+
+      <label>Sucursal</label>
+      <select id="sel-sucursal">
+        <option value="">Seleccioná cadena primero</option>
+      </select>
+
+      <button class="btn btn-primary" onclick="startToma()">Empezar toma →</button>
+    </div>
+    <button class="btn btn-secondary" onclick="showScreen('screen-home')">← Volver</button>
+  </div>
+
+
+  <!-- SCREEN 1.5: SECCIONES -->
+  <div class="screen" id="screen-secciones">
+    <div class="context-bar" id="contextBarSec"></div>
+    <div class="card">
+      <div class="card-title">¿Por dónde empezamos?</div>
+      <div class="card-sub">Elegí la sección que tenés enfrente. Podés hacerlas en cualquier orden y volver cuando quieras.</div>
+      <div id="seccionesList"></div>
+    </div>
+    <button class="btn btn-secondary" onclick="showScreen('screen-inicio')" style="margin-top:8px">← Cambiar sucursal</button>
+  </div>
+
+  <!-- SCREEN 2: CATEGORÍAS -->
+  <div class="screen" id="screen-categoria">
+    <div class="context-bar" id="contextBar"></div>
+
+    <div class="step-dots" id="stepDots"></div>
+
+    <div class="card">
+      <div class="cat-header">
+        <div class="cat-name" id="catName"></div>
+        <div class="cat-counter" id="catCounter"></div>
+      </div>
+      <div id="brandsList"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="prevCat()" id="btnPrev" style="flex:1">← Anterior</button>
+      <button class="btn btn-primary" onclick="nextCat()" id="btnNext" style="flex:2">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: RESUMEN -->
+  <div class="screen" id="screen-resumen">
+    <div class="context-bar" id="contextBarResumen"></div>
+
+    <div class="card">
+      <div class="card-title">Revisá antes de enviar</div>
+      <div class="card-sub">Verificá que los frentes estén completos</div>
+      <div id="summaryContent"></div>
+    </div>
+
+    <button class="btn btn-success" onclick="enviarToma()">✓ Confirmar y enviar</button>
+    <button class="btn btn-secondary" onclick="showScreen('screen-categoria')">← Volver a editar</button>
+  </div>
+
+  <!-- SCREEN 4: ÉXITO -->
+  <div class="screen" id="screen-exito">
+    <div class="card" style="text-align:center;padding:40px 24px">
+      <div style="font-size:64px;margin-bottom:16px">✅</div>
+      <div class="card-title" style="text-align:center">¡Toma enviada!</div>
+      <div style="font-size:14px;color:var(--gris);font-weight:600;margin-top:8px" id="exitoMsg"></div>
+    </div>
+    <button class="btn btn-primary" onclick="nuevaToma()">Nueva toma</button>
+    <button class="btn btn-secondary" onclick="showScreen('screen-home')">Ir al inicio</button>
+  </div>
+
+
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+
+
+<script>
+// ==================== DATA ====================
+const SUCURSALES = {
+  'Diarco': ['Martinez','Pilar','Barracas','Central'],
+  'Makro': ['Ituzaingo','San Martin','Benavidez','Pilar','Haedo','Avellaneda','Quilmes','San Justo','Lomas de Zamora','Olivos'],
+  'Maxiconsumo': ['Loma Hermosa','Campana','Pacheco','San Justo','Villa Dominico','Moreno','Tigre'],
+  'Nini': ['Moreno','La Plata'],
+  'Vital': ['San Justo-Boca 0001','Maycar Tronador','Abasto Bs.As','Malvinas Argentinas','Maycar (L.Hermosa)','Quilmes','Burzaco','Laferrere','Pilar','Maycar La Plata','El Talar','Avellaneda','Moreno'],
+  'Yaguar': ['Yaguar Campana','Yaguar Tigre','Moreno','Ingeniero Maschwitz']
+};
+
+const SECCIONES = [
+  { nombre: 'Pastas', emoji: '🍝', categorias: [
+    { nombre: 'Pastas Secas', marcas: ['Lucchetti','Matarrazzo','Rina','Favorita','Terrabussi','La Providencia','Pastasole','Sol Pampeano','Don Bernabeu','Knorr','Cica','Marca Propia','Otros'] },
+    { nombre: 'Pastas al Huevo', marcas: ['Lucchetti','Don Felipe','Don Vicente','Rina HVO','308','Marca Propia','Otros'] }
+  ]},
+  { nombre: 'Arroz', emoji: '🍚', categorias: [
+    { nombre: 'Arroz - Largo Fino', marcas: ['LF Lucchetti','LF Gallo','LF Maximo','LF Dos Hermanos','LF Maria','LF Cañuelas','LF 53','LF Ala','LF Marca Propia','LF Otros'] },
+    { nombre: 'Arroz - Parboil', marcas: ['Parboil Gallo','Parboil Lucchetti','Parboil Ala','Parboil Dos Hermanos','Parboil Cañuelas','Parboil Marca Propia'] }
+  ]},
+  { nombre: 'Harinas', emoji: '🌾', categorias: [
+    { nombre: 'Harina Leudante', marcas: ['Blancaflor','Morixe','Pureza','Caserita','Marca Propia','Otros (Sarita y Chacabuco)'] },
+    { nombre: 'Harina 000', marcas: ['Favorita','Morixe','Pureza','Cañuelas','Caserita','Marca Propia','Otros'] },
+    { nombre: 'Harina 0000', marcas: ['Favorita','Morixe','Pureza','Caserita','Marca Propia','Otros'] }
+  ]},
+  { nombre: 'Aceites', emoji: '🫙', categorias: [
+    { nombre: 'Aceite', marcas: ['Cocinero','Lira','Natura','Pureza','Cañuelas','Legitimo','Marca Propia','Otros'] },
+    { nombre: 'Jugo de Limón', marcas: ['Minerva','Favinco','Citric','Dos Anclas','Otros (Marca Propia)'] }
+  ]},
+  { nombre: 'Yerba & Café', emoji: '🧉', categorias: [
+    { nombre: 'Yerbas', marcas: ['Cruz de Malta Natural','Cruz de Malta Tradicional','NG Suave','NG Cimarron','NG Selección','Chamigo','Salus','Union','Taragui','Mañanita','Playadito','La Merced','Rosamonte','Amanda','La Tranquera','Marca Propia','Otras'] },
+    { nombre: 'Saquitos', marcas: ['Nobleza Gaucha','Taragui','Union','La Tranquera','M. Propias','Playadito'] },
+    { nombre: 'Café', marcas: ['Arlistan','Dolca','La Virginia','La Planta'] }
+  ]},
+  { nombre: 'Bodega', emoji: '🍷', categorias: [
+    { nombre: 'Vino', marcas: ['MRP Vinos','Otros Vinos'] },
+    { nombre: 'Espumantes', marcas: ['MRP Vinos','Otros Vinos'] }
+  ]},
+  { nombre: 'Congelados', emoji: '❄️', categorias: [
+    { nombre: 'Prefritos Pollo', marcas: ['Lucchetti','Granja','GDS 3kg','Patitas','Grangys','Sadia','Sadia 3kg','Swift','La Blanca','Marca Propia','Otros'] },
+    { nombre: 'Milanesa Saludable', marcas: ['Granja','Lucchetti','Swift','Vegetalex','Otros'] },
+    { nombre: 'Pizzas', marcas: ['Sibarita','Pietro','Horno Casero','El Noble'] },
+    { nombre: 'Vegetales', marcas: ['GDS','GDS 2,5kg','Lucchetti Vegetales','Green Life Vegetales','Green Life XL','McCain XL','Otros'] },
+    { nombre: 'Gelatinas', marcas: ['Exquisita 40gr','Exquisita 150gr','Orloc','Royal','Ravana','Marca Propia','Otros'] }
+  ]}
+];
+const CATEGORIAS = SECCIONES.flatMap(s => s.categorias);
+
+// ==================== STATE ====================
+let state = {
+  mes: '', cadena: '', sucursal: '',
+  catIndex: 0,
+  frentes: {}, // { 'Cat:Marca': valor }
+  records: []
+};
+
+// ==================== INIT ====================
+function init() {
+  // Init mes picker
+  renderMesGrid();
+
+  // Google Sheets URL hardcodeada
+  const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbweVaBQMGCLMlff9T2xmJjxvsYsdJMeJkX3p8mN374118T7jDlycgj8dBz1EuWL2iUX2Q/exec';
+
+  // Load records
+  loadRecordsFromStorage();
+  renderProgress(0);
+}
+
+// ==================== MES PICKER ====================
+const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const MESES_INICIO = { 2026: 6, 2027: 0, 2028: 0, 2029: 0, 2030: 0 };
+const YEARS = [2026, 2027, 2028, 2029, 2030];
+let pickerYear = 2026;
+let pickerMes = null; // 0-indexed
+
+function renderMesGrid() {
+  document.getElementById('mes-year-label').textContent = pickerYear;
+  // Disable nav buttons at boundaries
+  document.querySelector('.mes-year-nav button:first-child').disabled = pickerYear <= YEARS[0];
+  document.querySelector('.mes-year-nav button:last-child').disabled = pickerYear >= YEARS[YEARS.length-1];
+
+  const grid = document.getElementById('mes-grid');
+  grid.innerHTML = '';
+  const mesInicio = MESES_INICIO[pickerYear] || 0;
+  MESES.forEach((m, i) => {
+    if (i < mesInicio) return; // Ocultar meses anteriores al permitido
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'mes-btn' + (pickerMes === i && state.mes.includes(pickerYear) ? ' selected' : '');
+    btn.textContent = m.substring(0,3);
+    btn.title = m;
+    btn.onclick = () => selectMes(i);
+    grid.appendChild(btn);
+  });
+}
+
+function changeYear(delta) {
+  const newYear = pickerYear + delta;
+  if (newYear < YEARS[0] || newYear > YEARS[YEARS.length-1]) return;
+  pickerYear = newYear;
+  pickerMes = null;
+  renderMesGrid();
+}
+
+function selectMes(idx) {
+  pickerMes = idx;
+  const val = `${MESES[idx]} ${pickerYear}`;
+  state.mes = val;
+  const btn = document.getElementById('mes-display-btn');
+  btn.classList.add('selected');
+  document.getElementById('mes-display-text').textContent = val;
+  document.getElementById('mes-dropdown').style.display = 'none';
+  btn.classList.remove('open');
+  renderMesGrid();
+}
+
+function toggleMesPicker() {
+  const dd = document.getElementById('mes-dropdown');
+  const btn = document.getElementById('mes-display-btn');
+  const open = dd.style.display === 'none';
+  dd.style.display = open ? 'block' : 'none';
+  btn.classList.toggle('open', open);
+}
+
+// Close picker when clicking outside
+document.addEventListener('click', function(e) {
+  if (!document.getElementById('mes-picker').contains(e.target)) {
+    document.getElementById('mes-dropdown').style.display = 'none';
+    document.getElementById('mes-display-btn').classList.remove('open');
+  }
+});
+
+// ==================== NAVIGATION ====================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+
+
+}
+
+function renderProgress(pct) {
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+// ==================== SUCURSALES ====================
+function updateSucursales() {
+  const cadena = document.getElementById('sel-cadena').value;
+  const sel = document.getElementById('sel-sucursal');
+  sel.innerHTML = '';
+  if (!cadena) {
+    sel.innerHTML = '<option value="">Seleccioná cadena primero</option>';
+    return;
+  }
+  const sucs = SUCURSALES[cadena] || [];
+  const def = document.createElement('option');
+  def.value = ''; def.textContent = 'Seleccioná sucursal...';
+  sel.appendChild(def);
+  sucs.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s; opt.textContent = s;
+    sel.appendChild(opt);
+  });
+}
+
+// ==================== TOMA ====================
+function startToma() {
+  const mes = state.mes;
+  const cadena = document.getElementById('sel-cadena').value;
+  const sucursal = document.getElementById('sel-sucursal').value;
+
+  if (!mes || !cadena || !sucursal) {
+    showToast('Completá todos los campos', 'error'); return;
+  }
+
+  state.mes = mes;
+  state.cadena = cadena;
+  state.sucursal = sucursal;
+  state.frentes = {};
+  state.seccionActual = null;
+  state.catIndexEnSeccion = 0;
+  state.seccionesCompletadas = {};
+
+  renderSecciones();
+  showScreen('screen-secciones');
+}
+
+function renderSecciones() {
+  document.getElementById('contextBarSec').innerHTML = `
+    <div class="context-item"><div class="context-label">Mes</div><div class="context-value">${state.mes}</div></div>
+    <div class="context-item"><div class="context-label">Cadena</div><div class="context-value">${state.cadena}</div></div>
+    <div class="context-item"><div class="context-label">Sucursal</div><div class="context-value">${state.sucursal}</div></div>
+  `;
+  const list = document.getElementById('seccionesList');
+  list.innerHTML = '';
+
+  const totalSecs = SECCIONES.length;
+  const completadas = Object.keys(state.seccionesCompletadas).length;
+  renderProgress(Math.round((completadas / totalSecs) * 88));
+
+  SECCIONES.forEach((sec, si) => {
+    const isDone = !!state.seccionesCompletadas[si];
+    const catNames = sec.categorias.map(c => c.nombre).join(' · ');
+    const hasData = sec.categorias.some(cat =>
+      cat.marcas.some(m => state.frentes[`${cat.nombre}::${m}`] !== undefined && state.frentes[`${cat.nombre}::${m}`] !== '')
+    );
+    const card = document.createElement('button');
+    card.className = 'seccion-card' + (isDone ? ' done' : (hasData ? ' in-progress' : ''));
+    card.innerHTML = `
+      <div class="seccion-left">
+        <div class="seccion-emoji">${sec.emoji}</div>
+        <div class="seccion-info">
+          <div class="seccion-nombre">${sec.nombre}</div>
+          <div class="seccion-cats">${catNames}</div>
+        </div>
+      </div>
+      <div class="seccion-status">${isDone ? '✅' : (hasData ? '🟡' : '›')}</div>
+    `;
+    card.onclick = () => entrarSeccion(si);
+    list.appendChild(card);
+  });
+
+  // Boton ver resumen
+  const existing = document.getElementById('btnVerResumen');
+  if (existing) existing.remove();
+  const hayDatos = CATEGORIAS.some(cat =>
+    cat.marcas.some(m => state.frentes[`${cat.nombre}::${m}`] !== undefined)
+  );
+  if (hayDatos) {
+    const btn = document.createElement('button');
+    btn.id = 'btnVerResumen';
+    btn.className = 'btn btn-success';
+    btn.style.marginTop = '8px';
+    btn.textContent = completadas === totalSecs ? '✓ Ver resumen y enviar' : '✓ Ver resumen parcial';
+    btn.onclick = showResumen;
+    list.parentElement.parentElement.insertBefore(btn, list.parentElement.nextSibling);
+  }
+}
+
+function entrarSeccion(si) {
+  state.seccionActual = si;
+  state.catIndexEnSeccion = 0;
+  renderCatDeSeccion();
+  showScreen('screen-categoria');
+}
+
+function renderCatDeSeccion() {
+  const sec = SECCIONES[state.seccionActual];
+  const cats = sec.categorias;
+  const cat = cats[state.catIndexEnSeccion];
+  const totalEnSec = cats.length;
+
+  document.getElementById('catName').textContent = cat.nombre;
+  document.getElementById('catCounter').textContent = `${state.catIndexEnSeccion + 1} / ${totalEnSec} · ${sec.emoji} ${sec.nombre}`;
+
+  document.getElementById('contextBar').innerHTML = `
+    <div class="context-item"><div class="context-label">Mes</div><div class="context-value">${state.mes}</div></div>
+    <div class="context-item"><div class="context-label">Cadena</div><div class="context-value">${state.cadena}</div></div>
+    <div class="context-item"><div class="context-label">Sucursal</div><div class="context-value">${state.sucursal}</div></div>
+  `;
+
+  const dots = document.getElementById('stepDots');
+  dots.innerHTML = '';
+  cats.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'step-dot' + (i === state.catIndexEnSeccion ? ' active' : (i < state.catIndexEnSeccion ? ' done' : ''));
+    dots.appendChild(d);
+  });
+
+  const list = document.getElementById('brandsList');
+  list.innerHTML = '';
+  cat.marcas.forEach(marca => {
+    const key = `${cat.nombre}::${marca}`;
+    const val = state.frentes[key] !== undefined ? state.frentes[key] : '';
+    const row = document.createElement('div');
+    row.className = 'brand-row';
+    row.innerHTML = `
+      <div class="brand-name">${marca}</div>
+      <div class="stepper">
+        <button class="stepper-btn" onclick="adjustFrente('${key}', -1)">−</button>
+        <input type="text" inputmode="decimal" class="frentes-input ${val !== '' && val > 0 ? 'has-value' : ''}"
+               id="inp-${key.replace(/[^a-z0-9]/gi,'_')}"
+               value="${val}" min="0" placeholder="0"
+               oninput="setFrente('${key}', this.value, this)">
+        <button class="stepper-btn" onclick="adjustFrente('${key}', 1)">+</button>
+      </div>
+    `;
+    list.appendChild(row);
+  });
+
+  document.getElementById('btnPrev').style.display = state.catIndexEnSeccion === 0 ? 'none' : 'block';
+  const isLast = state.catIndexEnSeccion === totalEnSec - 1;
+  document.getElementById('btnNext').textContent = isLast ? `✓ Terminar ${sec.nombre}` : 'Siguiente →';
+}
+
+function parseFrente(val) {
+  if (val === '' || val === null || val === undefined) return null;
+  // Handle fractions like 1/3
+  if (typeof val === 'string' && val.includes('/')) {
+    const parts = val.split('/');
+    if (parts.length === 2) {
+      const num = parseFloat(parts[0]);
+      const den = parseFloat(parts[1]);
+      if (!isNaN(num) && !isNaN(den) && den !== 0) return Math.round((num/den) * 100) / 100;
+    }
+  }
+  // Handle comma as decimal separator
+  const cleaned = typeof val === 'string' ? val.replace(',', '.') : val;
+  const n = parseFloat(cleaned);
+  return isNaN(n) ? null : Math.round(n * 100) / 100;
+}
+
+function setFrente(key, val, el) {
+  const n = parseFrente(val);
+  if (n === null) {
+    delete state.frentes[key];
+    el.classList.remove('has-value');
+  } else {
+    state.frentes[key] = n;
+    el.classList.toggle('has-value', n > 0);
+  }
+}
+
+function adjustFrente(key, delta) {
+  const cat = key.split('::')[0];
+  const marca = key.split('::')[1];
+  const idSafe = key.replace(/[^a-z0-9]/gi,'_');
+  const el = document.getElementById('inp-' + idSafe);
+  const current = parseFloat(el.value) || 0;
+  const nuevo = Math.max(0, current + delta);
+  el.value = nuevo;
+  setFrente(key, nuevo, el);
+}
+
+function prevCat() {
+  if (state.catIndexEnSeccion > 0) {
+    state.catIndexEnSeccion--;
+    renderCatDeSeccion();
+    window.scrollTo(0,0);
+  }
+}
+
+function nextCat() {
+  const sec = SECCIONES[state.seccionActual];
+  const totalEnSec = sec.categorias.length;
+  if (state.catIndexEnSeccion < totalEnSec - 1) {
+    state.catIndexEnSeccion++;
+    renderCatDeSeccion();
+    window.scrollTo(0,0);
+  } else {
+    // Marcar seccion como completada y volver al menú de secciones
+    state.seccionesCompletadas[state.seccionActual] = true;
+    showToast(`✅ ${sec.nombre} guardado`, 'success');
+    renderSecciones();
+    showScreen('screen-secciones');
+    window.scrollTo(0,0);
+  }
+}
+
+// ==================== RESUMEN ====================
+function showResumen() {
+  renderProgress(95);
+
+  document.getElementById('contextBarResumen').innerHTML = `
+    <div class="context-item"><div class="context-label">Mes</div><div class="context-value">${state.mes}</div></div>
+    <div class="context-item"><div class="context-label">Cadena</div><div class="context-value">${state.cadena}</div></div>
+    <div class="context-item"><div class="context-label">Sucursal</div><div class="context-value">${state.sucursal}</div></div>
+  `;
+
+  const cont = document.getElementById('summaryContent');
+  cont.innerHTML = '';
+
+  CATEGORIAS.forEach(cat => {
+    const marcasConFrente = cat.marcas.filter(m => {
+      const k = `${cat.nombre}::${m}`;
+      return state.frentes[k] !== undefined && state.frentes[k] !== '';
+    });
+    const totalFrente = marcasConFrente.reduce((sum, m) => sum + (parseFloat(state.frentes[`${cat.nombre}::${m}`]) || 0), 0);
+
+    const row = document.createElement('div');
+    row.className = 'summary-row';
+    row.innerHTML = `
+      <div>
+        <div class="summary-cat">${cat.nombre}</div>
+        <div style="font-size:11px;color:var(--gris);font-weight:600">${marcasConFrente.length} marcas · Total: ${totalFrente} frentes</div>
+      </div>
+      <span class="badge ${marcasConFrente.length > 0 ? 'badge-verde' : 'badge-rojo'}">
+        ${marcasConFrente.length > 0 ? '✓' : '—'}
+      </span>
+    `;
+    cont.appendChild(row);
+  });
+
+  showScreen('screen-resumen');
+}
+
+// ==================== ENVÍO ====================
+async function enviarToma() {
+  const timestamp = new Date().toISOString();
+  const rows = [];
+
+  CATEGORIAS.forEach(cat => {
+    cat.marcas.forEach(marca => {
+      const key = `${cat.nombre}::${marca}`;
+      const frentes = state.frentes[key] !== undefined ? parseFloat(state.frentes[key]) || 0 : 0;
+      rows.push([timestamp, state.mes, state.cadena, state.sucursal, cat.nombre, marca, frentes]);
+    });
+  });
+
+  // Save locally always
+  const record = { timestamp, mes: state.mes, cadena: state.cadena, sucursal: state.sucursal, rows };
+  state.records.push(record);
+  saveRecordsToStorage();
+
+  // Enviar a Google Sheets
+  try {
+    await fetch(SHEETS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ rows })
+    });
+  } catch(e) {
+    console.log('Error enviando a Sheets:', e);
+  }
+
+  renderProgress(100);
+  document.getElementById('exitoMsg').textContent = `${state.mes} · ${state.cadena} · ${state.sucursal}`;
+  showScreen('screen-exito');
+}
+
+function nuevaToma() {
+  state.frentes = {};
+  state.seccionActual = null;
+  state.catIndexEnSeccion = 0;
+  state.seccionesCompletadas = {};
+  showScreen('screen-inicio');
+}
+
+// ==================== STORAGE ====================
+function saveRecordsToStorage() {
+  try { localStorage.setItem('soe_records', JSON.stringify(state.records)); } catch(e) {}
+}
+
+function loadRecordsFromStorage() {
+  try {
+    const saved = localStorage.getItem('soe_records');
+    if (saved) state.records = JSON.parse(saved);
+  } catch(e) {}
+}
+
+
+
+// ==================== SUPERVISOR (removido) ====================
+
+// ==================== EXPORT ====================
+function exportarCSV() {
+  if (state.records.length === 0) { showToast('No hay datos para exportar', 'error'); return; }
+
+  let csv = 'Timestamp,Mes,Cadena,Sucursal,Categoria,Marca,Frentes\n';
+  state.records.forEach(r => {
+    r.rows.forEach(row => {
+      csv += row.map(v => `"${v}"`).join(',') + '\n';
+    });
+  });
+
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `SOE_Mayoristas_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  showToast('CSV descargado ✓', 'success');
+}
+
+function exportarExcel() {
+  if (state.records.length === 0) { showToast('No hay datos para exportar', 'error'); return; }
+
+  // Build HTML table for Excel
+  let html = '<table><thead><tr><th>Timestamp</th><th>Mes</th><th>Cadena</th><th>Sucursal</th><th>Categoria</th><th>Marca</th><th>Frentes</th></tr></thead><tbody>';
+  state.records.forEach(r => {
+    r.rows.forEach(row => {
+      html += '<tr>' + row.map(v => `<td>${v}</td>`).join('') + '</tr>';
+    });
+  });
+  html += '</tbody></table>';
+
+  const blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `SOE_Mayoristas_${new Date().toISOString().split('T')[0]}.xls`;
+  a.click();
+  showToast('Excel descargado ✓', 'success');
+}
+
+// ==================== TOAST ====================
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' '+type : '');
+  setTimeout(() => { t.className = 'toast'; }, 3000);
+}
+
+
+
+// ==================== START ====================
+init();
+</script>
+</body>
+</html>
