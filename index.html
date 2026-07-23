@@ -400,6 +400,19 @@
   .empty-text { font-size: 15px; font-weight: 700; }
   .empty-sub { font-size: 13px; margin-top: 6px; }
 
+  /* ESTADO DE ENVÍO */
+  .estado-envio {
+    margin-top: 18px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+  .estado-envio.ok { background: #e6f7f1; color: var(--verde); }
+  .estado-envio.pendiente { background: #fff8e1; color: #8a6a00; border: 2px solid var(--amarillo); }
+  .estado-envio .btn { font-size: 14px; padding: 11px; }
+
   /* SECTION CARDS */
   .seccion-card {
     display: flex;
@@ -664,9 +677,10 @@
   <!-- SCREEN 4: ÉXITO -->
   <div class="screen" id="screen-exito">
     <div class="card" style="text-align:center;padding:40px 24px">
-      <div style="font-size:64px;margin-bottom:16px">✅</div>
-      <div class="card-title" style="text-align:center">¡Toma enviada!</div>
+      <div style="font-size:64px;margin-bottom:16px" id="exitoIcono">✅</div>
+      <div class="card-title" style="text-align:center" id="exitoTitulo">¡Toma enviada!</div>
       <div style="font-size:14px;color:var(--gris);font-weight:600;margin-top:8px" id="exitoMsg"></div>
+      <div class="estado-envio ok" id="exitoEstado"></div>
     </div>
     <button class="btn btn-primary" onclick="nuevaToma()">Nueva toma</button>
     <button class="btn btn-secondary" onclick="showScreen('screen-home')">Ir al inicio</button>
@@ -682,6 +696,10 @@
 
 
 <script>
+// ==================== CONFIGURACIÓN ====================
+// URL del Google Apps Script conectado a la planilla "SOE Mayoristas Molinos"
+var SHEETS_URL = 'https://script.google.com/macros/s/AKfycbweVaBQMGCLMlff9T2xmJjxvsYsdJMeJkX3p8mN374118T7jDlycgj8dBz1EuWL2iUX2Q/exec';
+
 // ==================== DATA ====================
 const SUCURSALES = {
   'Diarco': ['Martinez','Pilar','Barracas','Central'],
@@ -742,12 +760,14 @@ function init() {
   // Init mes picker
   renderMesGrid();
 
-  // Google Sheets URL hardcodeada
-  const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbweVaBQMGCLMlff9T2xmJjxvsYsdJMeJkX3p8mN374118T7jDlycgj8dBz1EuWL2iUX2Q/exec';
-
   // Load records
   loadRecordsFromStorage();
   renderProgress(0);
+
+  // Reintentar automáticamente las tomas que quedaron pendientes por falta de señal
+  flushPendientes().then(n => {
+    if (n > 0) showToast(`${n} toma(s) pendiente(s) enviada(s) ✓`, 'success');
+  });
 }
 
 // ==================== MES PICKER ====================
@@ -1096,21 +1116,98 @@ async function enviarToma() {
   state.records.push(record);
   saveRecordsToStorage();
 
-  // Enviar a Google Sheets con text/plain para evitar preflight CORS
-  try {
-    await fetch(SHEETS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ rows })
-    });
-  } catch(e) {
-    console.log('Error enviando a Sheets:', e);
-  }
+  // Enviar a Google Sheets
+  const btn = document.querySelector('#screen-resumen .btn-success');
+  if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
+
+  const ok = await enviarAGoogleSheets(rows);
+
+  if (btn) { btn.disabled = false; btn.textContent = '\u2713 Confirmar y enviar'; }
 
   renderProgress(100);
-  document.getElementById('exitoMsg').textContent = `${state.mes} · ${state.cadena} · ${state.sucursal}`;
+  document.getElementById('exitoMsg').textContent = `${state.mes} \u00b7 ${state.cadena} \u00b7 ${state.sucursal}`;
+
+  const estado = document.getElementById('exitoEstado');
+  const icono = document.getElementById('exitoIcono');
+  const titulo = document.getElementById('exitoTitulo');
+
+  if (ok) {
+    icono.textContent = '\u2705';
+    titulo.textContent = '\u00a1Toma enviada!';
+    estado.className = 'estado-envio ok';
+    estado.innerHTML = 'Guardado en la planilla \u2713';
+    flushPendientes();
+  } else {
+    guardarPendiente(rows);
+    icono.textContent = '\ud83d\udcf6';
+    titulo.textContent = 'Toma guardada en el celular';
+    estado.className = 'estado-envio pendiente';
+    estado.innerHTML = 'No hay conexi\u00f3n con la planilla. La toma qued\u00f3 guardada y se enviar\u00e1 sola cuando vuelva la se\u00f1al.<br><button class="btn btn-primary" style="margin-top:12px" onclick="reintentarEnvio()">Reintentar ahora</button>';
+  }
+
   showScreen('screen-exito');
+}
+
+// Envia las filas a Google Sheets. Devuelve true si la planilla confirmo la escritura.
+async function enviarAGoogleSheets(rows) {
+  try {
+    // Content-Type text/plain evita el preflight de CORS.
+    // Sin 'no-cors' podemos LEER la respuesta y confirmar de verdad que se guardo.
+    const resp = await fetch(SHEETS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ rows })
+    });
+    const data = await resp.json();
+    if (data && data.ok) return true;
+    console.error('La planilla respondio con error:', data);
+    return false;
+  } catch (e) {
+    console.error('Error enviando a Sheets:', e);
+    return false;
+  }
+}
+
+// ==================== COLA DE PENDIENTES ====================
+function guardarPendiente(rows) {
+  try {
+    const p = JSON.parse(localStorage.getItem('soe_pendientes') || '[]');
+    p.push(rows);
+    localStorage.setItem('soe_pendientes', JSON.stringify(p));
+  } catch(e) { console.error(e); }
+}
+
+async function flushPendientes() {
+  let p;
+  try { p = JSON.parse(localStorage.getItem('soe_pendientes') || '[]'); }
+  catch(e) { return 0; }
+  if (!p.length) return 0;
+
+  const quedan = [];
+  let enviadas = 0;
+  for (const rows of p) {
+    const ok = await enviarAGoogleSheets(rows);
+    if (ok) enviadas++; else quedan.push(rows);
+  }
+  localStorage.setItem('soe_pendientes', JSON.stringify(quedan));
+  return enviadas;
+}
+
+async function reintentarEnvio() {
+  const estado = document.getElementById('exitoEstado');
+  estado.innerHTML = 'Reintentando...';
+  const enviadas = await flushPendientes();
+  const quedan = JSON.parse(localStorage.getItem('soe_pendientes') || '[]').length;
+
+  if (quedan === 0) {
+    document.getElementById('exitoIcono').textContent = '\u2705';
+    document.getElementById('exitoTitulo').textContent = '\u00a1Toma enviada!';
+    estado.className = 'estado-envio ok';
+    estado.innerHTML = 'Guardado en la planilla \u2713';
+  } else {
+    estado.className = 'estado-envio pendiente';
+    estado.innerHTML = 'Todav\u00eda no hay conexi\u00f3n. Quedan ' + quedan + ' toma(s) por enviar.<br><button class="btn btn-primary" style="margin-top:12px" onclick="reintentarEnvio()">Reintentar ahora</button>';
+  }
 }
 
 function nuevaToma() {
